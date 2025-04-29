@@ -82,7 +82,7 @@ RUN git clone https://github.com/Tyler-Bibus/srsRAN_Project_GPIO.git /srsRAN \
 RUN wget -O /srsRAN/srsran.patch https://gitlab.flux.utah.edu/dmaas/srs-outdoor-ota/-/raw/master/etc/srsran/srsran.patch
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR ~/
 
 # Default command
 CMD ["/bin/bash"]
