@@ -13,6 +13,12 @@ RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     cmake \
+    make \
+    gcc \
+    g++ \
+    pkg-config \
+    libyaml-cpp-dev \
+    libgtest-dev \
     libfftw3-dev \
     libmbedtls-dev \
     libboost-program-options-dev \
@@ -21,33 +27,46 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install UHD drivers
-RUN sudo apt install -y autoconf automake build-essential ccache cmake cpufrequtils \
-  doxygen ethtool g++ git inetutils-tools libboost-all-dev libncurses-dev \
-  libusb-1.0-0 libusb-1.0-0-dev libusb-dev python3-dev python3-mako \
-  python3-numpy python3-requests python3-scipy python3-setuptools \
-  python3-ruamel.yaml \
-    && git clone https://github.com/EttusResearch/uhd.git ~/uhd \
-    && cd ~/uhd \
+# Install UHD dependencies and build from source
+RUN apt-get update && apt-get install -y \
+    autoconf \
+    automake \
+    build-essential \
+    ccache \
+    cmake \
+    cpufrequtils \
+    doxygen \
+    ethtool \
+    g++ \
+    git \
+    inetutils-tools \
+    libboost-all-dev \
+    libncurses-dev \
+    libusb-1.0-0 \
+    libusb-1.0-0-dev \
+    libusb-dev \
+    python3-dev \
+    python3-mako \
+    python3-numpy \
+    python3-requests \
+    python3-scipy \
+    python3-setuptools \
+    python3-ruamel.yaml \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone https://github.com/EttusResearch/uhd.git /uhd \
+    && cd /uhd \
     && git checkout v4.7.0.0 \
     && cd host \
     && mkdir build \
     && cd build \
     && cmake ../ \
-    && make -j $(nproc) \
-    && sudo make install \
-    && sudo ldconfig \
-    && sudo uhd_images_downloader
+    && make -j$(nproc) \
+    && make install \
+    && ldconfig \
+    && /usr/local/bin/uhd_images_downloader
 
-# TODO maybe set up GCC? We might need version 11.4
-# Uncomment these lines if needed...
-# NOTE: if this is needed, we might need to modify the update alternatives correctly..
-
-#RUN sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y \
-#    && sudo apt update \
-#    && sudo update-alternatives --config g++
-
-# Install srsRAN
+# Install srsRAN from custom repository
 RUN git clone https://github.com/Tyler-Bibus/srsRAN_Project_GPIO.git /srsRAN \
     && cd /srsRAN \
     && git checkout release23-10 \
@@ -55,15 +74,15 @@ RUN git clone https://github.com/Tyler-Bibus/srsRAN_Project_GPIO.git /srsRAN \
     && cd build \
     && cmake ../ \
     && make -j$(nproc) \
-    && cp ~/srsRAN/gnb_b210_20MHz_oneplus_8t.yml apps/gnb
-#    && make install \ OPTIONAL
-#    && ldconfig OPTIONAL
+    && cp /srsRAN/gnb_b210_20MHz_oneplus_8t.yml /srsRAN/apps/gnb/ \
+    && make install \
+    && ldconfig
 
-# Add patch to root directory.
-RUN wget https://gitlab.flux.utah.edu/dmaas/srs-outdoor-ota/-/raw/master/etc/srsran/srsran.patch ~/
+# Download and apply srsRAN patch
+RUN wget -O /srsRAN/srsran.patch https://gitlab.flux.utah.edu/dmaas/srs-outdoor-ota/-/raw/master/etc/srsran/srsran.patch
 
 # Set working directory
 WORKDIR /workspace
 
-# Default command (can be overridden when running the container)
+# Default command
 CMD ["/bin/bash"]
