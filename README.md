@@ -1,8 +1,8 @@
 # srsRAN_GPIO_Docker
 
-###This is a docker image for srsRAN, See instructions below for initializing the docker image 
+### This is a docker image for srsRAN, See instructions below for initializing the docker image 
 
-######To run the docker run the following.
+###### To run the docker run the following.
 
 **Make sure docker is installed!!!**
 
