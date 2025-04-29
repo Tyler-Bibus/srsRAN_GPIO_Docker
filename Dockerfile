@@ -59,6 +59,9 @@ RUN git clone https://github.com/Tyler-Bibus/srsRAN_Project_GPIO.git /srsRAN \
 #    && make install \ OPTIONAL
 #    && ldconfig OPTIONAL
 
+# Add patch to root directory.
+RUN wget https://gitlab.flux.utah.edu/dmaas/srs-outdoor-ota/-/raw/master/etc/srsran/srsran.patch ~/
+
 # Set working directory
 WORKDIR /workspace
 
