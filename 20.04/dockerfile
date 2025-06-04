@@ -67,8 +67,7 @@ RUN apt-get update && apt-get install -y \
     && /usr/local/bin/uhd_images_downloader
 
 # Clone srsRAN release 23_10 and apply patch
-RUN cd \
-    && git clone https://github.com/srsran/srsRAN_Project.git /srsRAN \
+RUN git clone https://github.com/srsran/srsRAN_Project.git /srsRAN \
     && cd /srsRAN \
     && git checkout release_23_10 \
     && wget -O srsran.patch https://raw.githubusercontent.com/Tyler-Bibus/srsRAN_GPIO_Docker/refs/heads/main/srsran.patch \
@@ -81,7 +80,7 @@ RUN cd \
     && ldconfig
 
 # Set working directory
-WORKDIR /
+WORKDIR /srsRAN/build/apps/gnb
 
 # Default command
 CMD ["/bin/bash"]
